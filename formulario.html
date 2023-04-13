@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Formulário de Matrícula</title>
+    <style>
+      /* estilo para exibir mensagem de erro */
+      .error-message {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Formulário de Matrícula</h1>
+    <form>
+      <label for="nome">Nome:</label>
+      <input type="text" id="nome" name="nome"><br><br>
+
+      <label for="matricula">Matrícula:</label>
+      <input type="text" id="matricula" name="matricula"><br><br>
+
+      <label for="turma">Turma:</label>
+      <select id="turma" name="turma">
+        <option value="">Selecione uma turma</option>
+        <option value="turma1">Turma 1</option>
+        <option value="turma2">Turma 2</option>
+        <option value="turma3">Turma 3</option>
+        <!-- adicione mais opções aqui se necessário -->
+      </select>
+      <span id="turma-message"></span> <!-- mensagem de erro será exibida aqui -->
+      <br><br>
+
+      <button type="submit">Enviar</button>
+    </form>
+
+    <script>
+      // limitar o número de respostas para cada turma
+      const MAX_TURMA_RESPOSTAS = 2;
+      const turmaSelect = document.getElementById("turma");
+      const turmaMessage = document.getElementById("turma-message");
+      const turmaOptions = turmaSelect.getElementsByTagName("option");
+
+      for (let i = 0; i < turmaOptions.length; i++) {
+        const option = turmaOptions[i];
+        const value = option.value;
+        if (value) {
+          const turmaRespostas = localStorage.getItem(value);
+          if (turmaRespostas && turmaRespostas >= MAX_TURMA_RESPOSTAS) {
+            option.disabled = true;
+          }
+        }
+      }
+
+      turmaSelect.addEventListener("change", () => {
+        const selectedOption = turmaSelect.options[turmaSelect.selectedIndex];
+        const selectedValue = selectedOption.value;
+        if (selectedValue) {
+          const turmaRespostas = localStorage.getItem(selectedValue);
+          if (turmaRespostas && turmaRespostas >= MAX_TURMA_RESPOSTAS) {
+            turmaMessage.textContent = "Esta turma já atingiu o limite de respostas.";
+          } else {
+            turmaMessage.textContent = "";
+          }
+        } else {
+          turmaMessage.textContent = "";
+        }
+      });
+
+      // salvar respostas na localStorage
+      const form = document.querySelector("form");
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const nome = document.getElementById("nome").value;
+        const matricula = document.getElementById("matricula").value;
+        const turma = document.getElementById("turma").value;
+
+        if (!turma) {
+          alert("Por favor, selecione uma turma.");
+          return;
+        }
+
+        const turmaRespostas = localStorage.getItem(turma);
+        if (turmaRespostas && turmaRespostas >= MAX_TURMA_RESPOSTAS) {
+          alert("Esta turma já atingiu o limite de respostas.");
+return;
+}
+localStorage.setItem(turma, turmaRespostas ? parseInt(turmaRespostas) + 1 : 1);
+
+// envie os dados do formulário para um servidor aqui
+// ...
+
+alert("Formulário enviado com sucesso!");
+form.reset();
+});
+</script>
+</body>
+</html>
